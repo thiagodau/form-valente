@@ -1,7 +1,8 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useForm, FormProvider } from "react-hook-form";
 import { Step1 } from "./Step1";
 import { Step2 } from "./Step2";
+import { Step2b } from "./Step2b";
 import { Step3 } from "./Step3";
 import { Step4 } from "./Step4";
 
@@ -12,77 +13,117 @@ type FormData = {
   email: string;
   whatsapp: string;
   sobreFinanciamento: "sozinho" | "comAlguem";
-  nomeLimpo?: "sim" | "nao" | "naoTenhoCerteza";
-  imovelFinanciado?: "sim" | "nao";
-  renda?: "1000-2000" | "2000-3000" | "3000-4000" | "4000-5000" | "5000-6000" | "6000-7000" | "7000-8000" | "acima-8000";
-  comprovarRenda?: "sim" | "nao";
-  valorEntrada?: "naoTenho" | "R$10.000,00" | "R$20.000,00" | "R$30.000,00" | "R$40.000,00" | "R$50.000,00" | "R$60.000,00" | "R$70.000,00" | "R$80.000,00" | "R$90.000,00" | "R$100.000,00" | "acima-100000" | "automovel" | "automovel+dinheiro";
+  nomeLimpo?: string;
+  imovelFinanciado?: string;
+  renda?: string;
+  comprovarRenda?: string;
+  valorEntrada?: string;
+
+  // segundo financiador
+  nomeLimpo2?: string;
+  imovelFinanciado2?: string;
+  renda2?: string;
+  comprovarRenda2?: string;
 };
 
 export function MultiStepForm() {
-  const methods = useForm<FormData>();
-  const [step, setStep] = useState(1);
+  const methods = useForm<FormData>({ mode: "onBlur", defaultValues: {
+    sobreFinanciamento: "sozinho", // opção já marcada
+  }, });
+  const { handleSubmit, watch, trigger } = methods;
+
+  const sobreFinanciamento = watch("sobreFinanciamento");
+
+  const [flow, setFlow] = useState<number[]>([1, 2, 3, 4]);
+  const [currentIndex, setCurrentIndex] = useState(0);
+
+  useEffect(() => {
+    // fluxo condicional
+    if (sobreFinanciamento === "comAlguem") {
+      setFlow([1, 2, 2.5, 3, 4]);
+    } else {
+      setFlow([1, 2, 3, 4]);
+    }
+    setCurrentIndex(0);
+  }, [sobreFinanciamento]);
+
+  const currentStep = flow[currentIndex];
 
   const nextStep = async () => {
-    const isValid = await methods.trigger();
+    // campos a validar dependendo do step
+    let fieldsToValidate: (keyof FormData)[] = [];
 
-    if (isValid) {
-      const financiamento = methods.getValues("sobreFinanciamento");
+    switch (currentStep) {
+      case 1:
+        fieldsToValidate = ["name", "email", "whatsapp", "sobreFinanciamento"];
+        break;
+      case 2:
+        fieldsToValidate = ["nomeLimpo", "imovelFinanciado", "renda", "comprovarRenda", "valorEntrada"];
+        break;
+      case 2.5:
+        fieldsToValidate = ["nomeLimpo2", "imovelFinanciado2", "renda2", "comprovarRenda2"];
+        break;
+      case 3:
+        fieldsToValidate = []; // Step3 é só revisão
+        break;
+    }
 
-      if (step === 1) {
-        // NOVO FLUXO:
-        // "sozinho" → Step 2
-        // "comAlguem" → Step 3
-        if (financiamento === "sozinho") {
-          setStep(2);
-          return;
-        }
-        if (financiamento === "comAlguem") {
-          setStep(3);
-          return;
-        }
-      }
-
-      setStep((prev) => prev + 1);
+    // dispara validação dos campos da etapa
+    const isValid = await trigger(fieldsToValidate);
+    if (isValid && currentIndex < flow.length - 1) {
+      setCurrentIndex(currentIndex + 1);
     }
   };
 
-
-  const prevStep = () => setStep((prev) => prev - 1);
+  const prevStep = () => {
+    if (currentIndex > 0) {
+      setCurrentIndex(currentIndex - 1);
+    }
+  };
 
   const onSubmit = (data: FormData) => {
-    console.log("Formulário completo:", data);
-    setStep(4); // Mostra tela de agradecimento
+    console.log("Formulário enviado:", data);
+    const agradecimentoIndex = flow.indexOf(4);
+    setCurrentIndex(agradecimentoIndex !== -1 ? agradecimentoIndex : flow.length - 1);
+  };
+
+  const renderStep = () => {
+    switch (currentStep) {
+      case 1:
+        return <Step1 />;
+      case 2:
+        return <Step2 />;
+      case 2.5:
+        return <Step2b />;
+      case 3:
+        return <Step3 />;
+      case 4:
+        return <Step4 />;
+      default:
+        return null;
+    }
   };
 
   return (
     <FormProvider {...methods}>
-      <form
-        onSubmit={methods.handleSubmit(onSubmit)}
-        style={{ maxWidth: 400, margin: "0 auto", padding: 20 }}
-      >
-        {step === 1 && <Step1 />}
-        {step === 2 && <Step2 />}
-        {step === 3 && <Step3 />}
-        {step === 4 && <Step4 />}
+      <form onSubmit={handleSubmit(onSubmit)}>
+        {renderStep()}
 
-        {step < 4 && (
-          <div style={{ marginTop: 20, display: "flex", gap: 10 }}>
-            {step > 1 && (
-              <button type="button" onClick={prevStep}>
-                Voltar
-              </button>
-            )}
+        <div style={{ marginTop: 20 }}>
+          {currentStep !== 1 && currentStep !== 4 && (
+            <button type="button" onClick={prevStep} style={{ marginRight: 10 }}>
+              Voltar
+            </button>
+          )}
 
-            {step < 3 && (
-              <button type="button" onClick={nextStep}>
-                Próximo
-              </button>
-            )}
+          {currentStep !== 3 && currentStep !== 4 && (
+            <button type="button" onClick={nextStep}>
+              Próximo
+            </button>
+          )}
 
-            {step === 3 && <button type="submit">Enviar</button>}
-          </div>
-        )}
+          {currentStep === 3 && <button type="submit">Enviar</button>}
+        </div>
       </form>
     </FormProvider>
   );

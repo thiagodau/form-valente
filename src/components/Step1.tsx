@@ -20,14 +20,14 @@ export function Step1() {
       </div>
 
       <div className="class-input">
-        <label>Email</label>
+        <label>E-mail</label>
         <input
           type="email"
           {...register("email", {
-            required: "O email é obrigatório",
+            required: "O e-mail é obrigatório",
             pattern: {
               value: /^\S+@\S+$/i,
-              message: "Email inválido",
+              message: "E-mail inválido",
             },
           })}
           style={{ width: "100%", padding: 8 }}
@@ -64,18 +64,17 @@ export function Step1() {
             />
             &nbsp;Quero financiar sozinho
           </label>
-          {/*
-            <label>
+
+          <label>
             <input
               type="radio"
               value="comAlguem"
               {...register("sobreFinanciamento", {
                 required: "Escolha uma opção",
               })}
-              />
-            Quero financiar com mais alguém
+            />
+            &nbsp;Quero financiar com mais alguém
           </label>
-          */}
         </div>
         {errors.sobreFinanciamento?.message && (
           <span>
