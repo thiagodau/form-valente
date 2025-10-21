@@ -6,7 +6,7 @@ function App() {
   return (
     <>
       <h2>Interesse em financiamento de imóvel</h2>
-      <span>@leandrovalente_</span>
+      <p>@leandrovalente_</p>
       <MultiStepForm />
     </>
   )

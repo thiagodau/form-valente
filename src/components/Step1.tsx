@@ -16,7 +16,7 @@ export function Step1() {
           {...register("name", { required: "O nome é obrigatório" })}
           style={{ width: "100%", padding: 8 }}
         />
-        {errors.name && <span style={{ color: "#EF5350" }}>{errors.name.message as string}</span>}
+        {errors.name && <span>{errors.name.message as string}</span>}
       </div>
 
       <div className="class-input">
@@ -32,7 +32,7 @@ export function Step1() {
           })}
           style={{ width: "100%", padding: 8 }}
         />
-        {errors.email && <span style={{ color: "#EF5350" }}>{errors.email.message as string}</span>}
+        {errors.email && <span>{errors.email.message as string}</span>}
       </div>
 
       <div className="class-input">
@@ -48,7 +48,7 @@ export function Step1() {
           style={{ width: "100%", padding: 8 }}
         />
         {errors.whatsapp && (
-          <span style={{ color: "#EF5350" }}>{errors.whatsapp.message as string}</span>
+          <span>{errors.whatsapp.message as string}</span>
         )}
       </div>
       <div className="class-input">
@@ -78,7 +78,7 @@ export function Step1() {
           */}
         </div>
         {errors.sobreFinanciamento?.message && (
-          <span style={{ color: "red" }}>
+          <span>
             {String(errors.sobreFinanciamento.message)}
           </span>
         )}

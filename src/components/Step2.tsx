@@ -34,7 +34,7 @@ export function Step2() {
           </label>
         </div>
         {errors.nomeLimpo?.message && (
-          <span style={{ color: "red" }}>{String(errors.nomeLimpo.message)}</span>
+          <span>{String(errors.nomeLimpo.message)}</span>
         )}
       </div>
 
@@ -52,7 +52,7 @@ export function Step2() {
           </label>
         </div>
         {errors.imovelFinanciado?.message && (
-          <span style={{ color: "red" }}>{String(errors.imovelFinanciado.message)}</span>
+          <span>{String(errors.imovelFinanciado.message)}</span>
         )}
       </div>
 
@@ -70,7 +70,7 @@ export function Step2() {
           <option value="7000-8000">R$7.000,00 a R$8.000,00</option>
           <option value="acima-8000">Acima de R$8.000,00</option>
         </select>
-        {errors.renda?.message && <span style={{ color: "red" }}>{String(errors.renda.message)}</span>}
+        {errors.renda?.message && <span>{String(errors.renda.message)}</span>}
       </div>
 
       {/* Comprovação de renda */}
@@ -87,7 +87,7 @@ export function Step2() {
           </label>
         </div>
         {errors.comprovarRenda?.message && (
-          <span style={{ color: "red" }}>{String(errors.comprovarRenda.message)}</span>
+          <span>{String(errors.comprovarRenda.message)}</span>
         )}
       </div>
 
@@ -106,7 +106,7 @@ export function Step2() {
           <option value="automovel">Tenho um automóvel</option>
           <option value="automovel+dinheiro">Tenho um automóvel mais valor em dinheiro</option>
         </select>
-        {errors.valorEntrada?.message && <span style={{ color: "red" }}>{String(errors.valorEntrada.message)}</span>}
+        {errors.valorEntrada?.message && <span>{String(errors.valorEntrada.message)}</span>}
       </div>
     </>
   );
