@@ -1,5 +1,9 @@
 import { useState, useEffect } from "react";
 import { useForm, FormProvider } from "react-hook-form";
+
+import { db } from "../firebase/firebaseConfig";
+import { collection, addDoc, Timestamp } from "firebase/firestore";
+
 import { Step1 } from "./Step1";
 import { Step2 } from "./Step2";
 import { Step2b } from "./Step2b";
@@ -27,9 +31,11 @@ type FormData = {
 };
 
 export function MultiStepForm() {
-  const methods = useForm<FormData>({ mode: "onBlur", defaultValues: {
-    sobreFinanciamento: "sozinho", // opção já marcada
-  }, });
+  const methods = useForm<FormData>({
+    mode: "onBlur", defaultValues: {
+      sobreFinanciamento: "sozinho", // opção já marcada
+    },
+  });
   const { handleSubmit, watch, trigger } = methods;
 
   const sobreFinanciamento = watch("sobreFinanciamento");
@@ -81,10 +87,20 @@ export function MultiStepForm() {
     }
   };
 
-  const onSubmit = (data: FormData) => {
-    console.log("Formulário enviado:", data);
-    const agradecimentoIndex = flow.indexOf(4);
-    setCurrentIndex(agradecimentoIndex !== -1 ? agradecimentoIndex : flow.length - 1);
+  const onSubmit = async (data: FormData) => {
+    try {
+      console.log("Enviando dados...");
+      await addDoc(collection(db, "formularios"), {
+        ...data,
+        createdAt: Timestamp.now(), // data e hora da inserção
+      });
+      //setStep(step + 1); // vai para tela de agradecimento
+      const agradecimentoIndex = flow.indexOf(4);
+      setCurrentIndex(agradecimentoIndex !== -1 ? agradecimentoIndex : flow.length - 1);
+      console.log("Enviando...", data);
+    } catch (error) {
+      console.error("Erro ao salvar dados:", error);
+    }
   };
 
   const renderStep = () => {
