@@ -94,10 +94,9 @@ export function MultiStepForm() {
         ...data,
         createdAt: Timestamp.now(), // data e hora da inserção
       });
-      //setStep(step + 1); // vai para tela de agradecimento
       const agradecimentoIndex = flow.indexOf(4);
       setCurrentIndex(agradecimentoIndex !== -1 ? agradecimentoIndex : flow.length - 1);
-      console.log("Enviando...", data);
+      console.log("Enviado com sucesso.", data);
     } catch (error) {
       console.error("Erro ao salvar dados:", error);
     }
