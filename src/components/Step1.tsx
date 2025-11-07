@@ -51,6 +51,7 @@ export function Step1() {
           <span>{errors.whatsapp.message as string}</span>
         )}
       </div>
+
       <div className="class-input">
         <label>Sobre a simulação de financiamento:</label>
         <div style={{ display: "flex", flexDirection: "column", marginTop: 8 }}>
@@ -77,9 +78,26 @@ export function Step1() {
           </label>
         </div>
         {errors.sobreFinanciamento?.message && (
-          <span>
-            {String(errors.sobreFinanciamento.message)}
-          </span>
+          <span>{String(errors.sobreFinanciamento.message)}</span>
+        )}
+      </div>
+
+      {/* Checkbox LGPD */}
+      <div className="class-input" style={{ marginTop: 16 }}>
+        <label style={{ display: "flex", alignItems: "center", fontSize: "10px" }}>
+          <input
+            type="checkbox"
+            {...register("consentimentoLGPD", {
+              validate: (value) =>
+                value || "Você precisa permitir a coleta dos dados para continuar",
+            })}
+            style={{ marginRight: 8 }}
+          />
+          Autorizo a coleta dos meus dados pessoais para fins de contato e
+          simulação, conforme a LGPD. Garantimos o sigilo das informações.
+        </label>
+        {errors.consentimentoLGPD && (
+          <span style={{fontSize: '10px'}}>{errors.consentimentoLGPD.message as string}</span>
         )}
       </div>
     </>

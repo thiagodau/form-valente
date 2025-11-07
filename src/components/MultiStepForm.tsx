@@ -22,6 +22,7 @@ type FormData = {
   renda?: string;
   comprovarRenda?: string;
   valorEntrada?: string;
+  consentimentoLGPD?: boolean
 
   // segundo financiador
   nomeLimpo2?: string;
@@ -59,20 +60,39 @@ export function MultiStepForm() {
     // campos a validar dependendo do step
     let fieldsToValidate: (keyof FormData)[] = [];
 
-    switch (currentStep) {
-      case 1:
-        fieldsToValidate = ["name", "email", "whatsapp", "sobreFinanciamento"];
-        break;
-      case 2:
-        fieldsToValidate = ["nomeLimpo", "imovelFinanciado", "renda", "comprovarRenda", "valorEntrada"];
-        break;
-      case 2.5:
-        fieldsToValidate = ["nomeLimpo2", "imovelFinanciado2", "renda2", "comprovarRenda2"];
-        break;
-      case 3:
-        fieldsToValidate = []; // Step3 é só revisão
-        break;
-    }
+    // dentro de nextStep
+switch (currentStep) {
+  case 1:
+    fieldsToValidate = [
+      "name",
+      "email",
+      "whatsapp",
+      "sobreFinanciamento",
+      "consentimentoLGPD" // <-- adicionado aqui
+    ];
+    break;
+  case 2:
+    fieldsToValidate = [
+      "nomeLimpo",
+      "imovelFinanciado",
+      "renda",
+      "comprovarRenda",
+      "valorEntrada"
+    ];
+    break;
+  case 2.5:
+    fieldsToValidate = [
+      "nomeLimpo2",
+      "imovelFinanciado2",
+      "renda2",
+      "comprovarRenda2"
+    ];
+    break;
+  case 3:
+    fieldsToValidate = []; // Step3 é só revisão
+    break;
+}
+
 
     // dispara validação dos campos da etapa
     const isValid = await trigger(fieldsToValidate);
